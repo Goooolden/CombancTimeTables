@@ -106,7 +106,7 @@ Pod::Spec.new do |s|
   #
 
   # s.resource  = "icon.png"
-  s.resource = 'TimeTables/Resource.boundle'
+  s.resource = "TimeTables/Resource.bundle"
 
   # s.preserve_paths = "FilesToSave", "MoreFilesToSave"
 
