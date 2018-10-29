@@ -12,7 +12,8 @@
 
 @interface WeekView()
 
-@property (nonatomic, copy ) NSDictionary *infoDic;
+@property (nonatomic, copy  ) NSDictionary *infoDic;
+@property (nonatomic, strong) UIButton *recordBtn;
 
 @end
 
@@ -50,12 +51,12 @@
         weekBtn.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:14];
         weekBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
         [weekBtn setTitle:@"第十五周" forState:UIControlStateNormal];
-        [weekBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [weekBtn setBackgroundColor:[UIColor whiteColor]];
         [weekBtn setTitleColor:[UIColor colorWithHex:@"#7a7e85"] forState:UIControlStateNormal];
         if (i == 1) {
             [weekBtn setBackgroundColor:[UIColor colorWithHex:@"#007aff"]];
             [weekBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            _recordBtn = weekBtn;
         }
         weekBtn.layer.borderColor = [[UIColor colorWithHex:@"#f8faff"] CGColor];
         weekBtn.layer.borderWidth = 1;
@@ -71,6 +72,17 @@
     if (self.weekViewClickedBlock) {
         self.weekViewClickedBlock(@"第十五周", @"typeid");
     }
+    if (_recordBtn == sender) {
+        //上次点击的按钮，不做处理
+    }else {
+        //本次点击的按钮
+        [sender setBackgroundColor:[UIColor colorWithHex:@"#007aff"]];
+        [sender setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        //上次点击的按钮
+        [_recordBtn setBackgroundColor:[UIColor whiteColor]];
+        [_recordBtn setTitleColor:[UIColor colorWithHex:@"#7a7e85"] forState:UIControlStateNormal];
+    }
+    _recordBtn = sender;
 }
 
 @end

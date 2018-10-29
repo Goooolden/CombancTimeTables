@@ -74,7 +74,7 @@
 - (UIButton *)deleteBtn {
     if (!_deleteBtn) {
         _deleteBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_deleteBtn setBackgroundImage:[UIImage imageNamed:@"Resource.boundle/icon_close.png"] forState:UIControlStateNormal];
+        [_deleteBtn setBackgroundImage:[UIImage imageNamed:@"Resource.bundle/icon_close.png"] forState:UIControlStateNormal];
         [_deleteBtn addTarget:self action:@selector(deleteBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _deleteBtn;

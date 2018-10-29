@@ -22,7 +22,7 @@
 
 + (instancetype)createTitleViewWithTitleType:(TitleType)titleType {
     TitleView *titleView = [[TitleView alloc]initWithTitleType:titleType];
-    titleView.frame = CGRectMake(0, 0, SCREEN_WIDTH, getHeight(44));
+    titleView.frame = CGRectMake(0, 80, SCREEN_WIDTH - 160, getHeight(44));
     return titleView;
 }
 
@@ -44,7 +44,7 @@
     self.titleBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
     [self.titleBtn setTitle:_title forState:UIControlStateNormal];
     [self.titleBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [self.titleBtn setImage:[UIImage imageNamed:@"Resource.boundle/icon_switch.png"] forState:UIControlStateNormal];
+    [self.titleBtn setImage:[UIImage imageNamed:@"Resource.bundle/icon_switch.png"] forState:UIControlStateNormal];
     [self.titleBtn setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, -165)];
     [self.titleBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, -10, 0, 0)];
     [self.titleBtn addTarget:self action:@selector(titleBtnClick:) forControlEvents:UIControlEventTouchUpInside];
