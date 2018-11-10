@@ -15,6 +15,9 @@
 #import "WeekView.h"
 #import "PopTimeTablesView.h"
 #import "TimeTablesDefine.h"
+#import "NSDate+TimeTables.h"
+#import "TimesTableInterfaceMacro.h"
+#import "TimesTableInterfaceRequest.h"
 
 #define CELL_WIDTH  getWidth(66)
 #define CELL_HEIGHT getHeight(80)
@@ -36,6 +39,7 @@ UICollectionViewDelegateFlowLayout>
 @property (nonatomic, strong) UITableView *leftTableView;
 @property (nonatomic, strong) UIScrollView *rightScrollView;
 @property (nonatomic, strong) UICollectionView *rightCollectionView;
+@property (nonatomic, strong) NSDate *currentDate;
 
 @end
 
@@ -44,9 +48,15 @@ UICollectionViewDelegateFlowLayout>
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
+        self.currentDate = [NSDate new];
         [self configUI];
     }
     return self;
+}
+
+- (void)setDateArray:(NSArray<MyCourseModel *> *)dateArray {
+    _dateArray = dateArray;
+    [self.rightCollectionView reloadData];
 }
 
 - (void)configUI {
@@ -71,7 +81,10 @@ UICollectionViewDelegateFlowLayout>
         [self.leftTableView setLayoutMargins:UIEdgeInsetsMake(0, 0, 0, 0)];
     }
     [self addSubview:self.leftTableView];
-    self.leftTableView.tableHeaderView = [LeftHeaderView createLeftHeaderView:LeftHeaderMonth title:@"七月"];
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    formatter.numberStyle = kCFNumberFormatterRoundHalfDown;
+    NSString *string = [formatter stringFromNumber:[NSNumber numberWithInt:self.currentDate.month]];
+    self.leftTableView.tableHeaderView = [LeftHeaderView createLeftHeaderView:LeftHeaderMonth title:[NSString stringWithFormat:@"%@月",string]];
     
     self.rightScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(self.leftTableView.frame.size.width, getHeight(46), SCREEN_WIDTH - getWidth(42), self.bounds.size.height - getHeight(46))];
     self.rightScrollView.contentSize = CGSizeMake((CELL_WIDTH + 1)* 7, self.leftTableView.frame.size.height);
@@ -113,12 +126,16 @@ UICollectionViewDelegateFlowLayout>
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     LeftTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:LEFT_CELLID];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    cell.leftLabel.text = @"第一节";
+    
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    formatter.numberStyle = kCFNumberFormatterRoundHalfDown;
+    NSString *string = [formatter stringFromNumber:[NSNumber numberWithInteger:indexPath.section + 1]];
+    cell.leftLabel.text = [NSString stringWithFormat:@"第%@节",string];
     return cell;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 10;
+    return 8;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -147,7 +164,7 @@ UICollectionViewDelegateFlowLayout>
 
 #pragma mark - CollectionViewDelegate
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-    return 10;
+    return 8;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
@@ -156,12 +173,25 @@ UICollectionViewDelegateFlowLayout>
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     RightCollectionViewCell *cell = (RightCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:RIGHT_CELLID forIndexPath:indexPath];
+    for (MyCourseModel *model in self.dateArray) {
+        if (indexPath.row + 1 == [model.week intValue] &&
+            indexPath.section + 1 == [model.numofday intValue]) {
+            cell.courseLabel.text = [NSString stringWithFormat:@"%@\n%@\n%@",model.subject,model.clazz,model.teacherName];
+        }
+    }
     return cell;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    PopTimeTablesView *popView = [[PopTimeTablesView alloc]initWithPopTimeTablesViewType:MyPopTimeTablesViewType];
-    [[UIApplication sharedApplication].keyWindow addSubview:popView];
+    for (MyCourseModel *model in self.dateArray) {
+        if (indexPath.row + 1 == [model.week intValue] &&
+            indexPath.section + 1 == [model.numofday intValue]) {
+            [TimesTableInterfaceRequest requestCourseInfo:courseInfoParam(model.courseId) success:^(id json) {
+                PopTimeTablesView *popView = [[PopTimeTablesView alloc]initWithPopTimeTablesViewType:MyPopTimeTablesViewType InfoArray:json];
+                [[UIApplication sharedApplication].keyWindow addSubview:popView];
+            } failed:^(NSError *error) {}];
+        }
+    }
 }
 
 - (CGSize)collectionView:(UICollectionView*)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
@@ -170,11 +200,13 @@ UICollectionViewDelegateFlowLayout>
     }
     return CGSizeMake(0, 0);
 }
+
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     UICollectionReusableView *reusableView = nil;
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
         RightCollectionHeaderView *tempHeaderView = (RightCollectionHeaderView *)[collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:COLLECTION_HEADER forIndexPath:indexPath];
         [tempHeaderView createRightHeaderView:RightHeaderViewDayWeek];
+        [tempHeaderView updateDate:[self.currentDate getCurrentWeekAllDate:@"dd"] currentWeek:self.currentDate.week];
         reusableView = tempHeaderView;
     } else if ([kind isEqualToString:UICollectionElementKindSectionFooter]) {
         // 底部视图

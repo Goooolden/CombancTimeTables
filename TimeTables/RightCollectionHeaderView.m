@@ -13,6 +13,9 @@
 @implementation RightCollectionHeaderView
 
 - (void)createRightHeaderView:(RightHeaderViewType)type {
+    for (UIView *view in self.subviews) {
+        [view removeFromSuperview];
+    }
     switch (type) {
         case RightHeaderViewDayWeek: {
             [self createDayweekHeaderView];
@@ -57,7 +60,7 @@
         dateLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:12];
         dateLabel.textColor = [UIColor colorWithHex:@"#38383d"];
         dateLabel.textAlignment = NSTextAlignmentCenter;
-        dateLabel.text = @"18";
+        dateLabel.tag  = 8888 + i;
         [self addSubview:dateLabel];
         //星期
         UILabel *weeklabel = [[UILabel alloc]init];
@@ -67,11 +70,11 @@
         weeklabel.layer.masksToBounds = YES;
         weeklabel.layer.cornerRadius = getHeight(30)/2;
         weeklabel.textAlignment = NSTextAlignmentCenter;
-        weeklabel.text = @"三";
-        if (i == 3) {
-            weeklabel.textColor = [UIColor whiteColor];
-            weeklabel.backgroundColor = [UIColor colorWithHex:@"007aff"];
-        }
+        NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+        formatter.numberStyle = kCFNumberFormatterRoundHalfDown;
+        NSString *string = [formatter stringFromNumber:[NSNumber numberWithInteger:i + 1]];
+        weeklabel.text = string;
+        weeklabel.tag  = 9999 + i;
         [self addSubview:weeklabel];
     }
 }
@@ -90,6 +93,17 @@
         dateLabel.textAlignment = NSTextAlignmentCenter;
         dateLabel.text = @"7月18日  周一";
         [self addSubview:dateLabel];
+    }
+}
+
+- (void)updateDate:(NSArray *)currentWeeks currentWeek:(int)week {
+    for (int i = 0; i < 7; i++) {
+        UILabel *dateLabel = [self viewWithTag:8888+i];
+        dateLabel.text = currentWeeks[i];
+        
+        UILabel *weekLabel = [self viewWithTag:9999+week-1];
+        weekLabel.textColor = [UIColor whiteColor];
+        weekLabel.backgroundColor = [UIColor colorWithHex:@"007aff"];
     }
 }
 

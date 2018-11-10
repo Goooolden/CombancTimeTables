@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "CombancTimeTables"
-  s.version      = "0.0.2"
+  s.version      = "0.0.3"
   s.summary      = "课程表"
 
   # This description is used to generate tags and improve search results.
@@ -80,7 +80,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/Goooolden/CombancTimeTables.git", :tag => "0.0.2" }
+  s.source       = { :git => "https://github.com/Goooolden/CombancTimeTables.git", :tag => "0.0.3" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -134,5 +134,6 @@ Pod::Spec.new do |s|
 
   # s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
   s.dependency "Masonry"
+  s.dependency "CombancDropDownView"
 
 end

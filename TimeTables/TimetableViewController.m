@@ -7,21 +7,23 @@
 //
 
 #import "TimetableViewController.h"
-#import "TitleView.h"
-#import "MyTimetablesView.h"
-#import "AllTimetablesView.h"
+#import "MyTimetablesView.h"         //我的课表
+#import "AllTimetablesView.h"        //全部课表
+#import "TitleView.h"                //title
+#import "DropDownTimeTablesView.h"   //全部课表下拉框
 #import "TimeTablesDefine.h"
-#import "DropDownTimeTablesView.h"
 #import "UIColor+TimeTables.h"
+#import "NSDate+TimeTables.h"
+#import "TimesTableInterfaceMacro.h"
+#import "TimesTableInterfaceRequest.h"
 
 @interface TimetableViewController ()
-
 @property (nonatomic, strong) TitleView *titleView;
 @property (nonatomic, strong) MyTimetablesView *myTimetables;
 @property (nonatomic, strong) AllTimetablesView *allTimetables;
 @property (nonatomic, strong) UIButton *searchBtn;
 @property (nonatomic, strong) DropDownTimeTablesView *dropView;
-
+@property (nonatomic, strong) NSDate *currentDate;
 @end
 
 @implementation TimetableViewController
@@ -29,44 +31,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.edgesForExtendedLayout = UIRectEdgeNone;
+    self.currentDate = [NSDate new];
     [self creatUI];
-}
-
-- (void)creatUI {
-    //title
-    self.titleView = [TitleView createTitleViewWithTitleType:MyTimetableTitle];
-    __weak typeof(self) weakSelf = self;
-    [self.titleView setTitleClickedBlock:^(TitleType type) {
-        if (type == MyTimetableTitle) {
-            [weakSelf.allTimetables removeFromSuperview];
-            weakSelf.myTimetables = [[MyTimetablesView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - getHeight(64))];
-            [weakSelf.searchBtn removeFromSuperview];
-            weakSelf.searchBtn = nil;
-            [weakSelf.view addSubview:weakSelf.myTimetables];
-        }else if (type == AllTimetableTitle) {
-            [weakSelf.myTimetables removeFromSuperview];
-            weakSelf.allTimetables = [[AllTimetablesView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - getHeight(64))];
-            weakSelf.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:weakSelf.searchBtn];
-            [weakSelf.view addSubview:weakSelf.allTimetables];
-        }
-    }];
-    self.navigationItem.titleView = self.titleView;
-    
-    //timeTableView
-    switch (self.timetableViewType) {
-        case MyTimetableViewType:{
-            self.myTimetables = [[MyTimetablesView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - getHeight(64))];
-            [self.view addSubview:self.myTimetables];
-            break;
-        }
-        case AllTimetableViewType:{
-            self.allTimetables = [[AllTimetablesView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - getHeight(64))];
-            [self.view addSubview:self.allTimetables];
-            break;
-        }
-        default:
-            break;
-    }
 }
 
 - (UIButton *)searchBtn {
@@ -79,6 +45,64 @@
         [_searchBtn addTarget:self action:@selector(searchBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _searchBtn;
+}
+
+- (void)creatUI {
+    //title
+    self.titleView = [TitleView createTitleViewWithTitleType:MyTimetableTitle];
+    __weak typeof(self) weakSelf = self;
+    //title点击回调
+    [self.titleView setTitleClickedBlock:^(TitleType type) {
+        if (type == MyTimetableTitle) {
+            [weakSelf.allTimetables removeFromSuperview];
+            weakSelf.myTimetables = [[MyTimetablesView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - getHeight(64))];
+            [weakSelf.searchBtn removeFromSuperview];
+            weakSelf.searchBtn = nil;
+            [weakSelf.view addSubview:weakSelf.myTimetables];
+            //请求数据并刷新
+            NSArray *weeks = [weakSelf.currentDate getCurrentWeekAllDate:@"yyyy/MM/dd"];
+            [TimesTableInterfaceRequest requestMyCouresList:myCourseParam([weeks firstObject], [weeks lastObject]) success:^(id json) {
+                weakSelf.myTimetables.dateArray = json;
+            } failed:^(NSError *error) {}];
+        }else if (type == AllTimetableTitle) {
+            [weakSelf.myTimetables removeFromSuperview];
+            weakSelf.allTimetables = [[AllTimetablesView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - getHeight(64))];
+            weakSelf.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:weakSelf.searchBtn];
+            [weakSelf.view addSubview:weakSelf.allTimetables];
+            //请求数据并刷新
+            NSArray *weeks = [weakSelf.currentDate getCurrentWeekAllDate:@"yyyy/MM/dd"];
+            [TimesTableInterfaceRequest requestAllCouresList:allCourseParam(@"", @"", @"", @"", @"", [weeks firstObject], [weeks lastObject]) success:^(id json) {
+                
+            } failed:^(NSError *error) {}];
+        }
+    }];
+    self.navigationItem.titleView = self.titleView;
+    
+    //timeTableView
+    switch (self.timetableViewType) {
+        case MyTimetableViewType:{
+            //跳转到我的课表
+            self.myTimetables = [[MyTimetablesView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - getHeight(64))];
+            [self.view addSubview:self.myTimetables];
+            //请求数据并刷新
+            NSArray *weeks = [self.currentDate getCurrentWeekAllDate:@"yyyy/MM/dd"];
+            [TimesTableInterfaceRequest requestMyCouresList:myCourseParam([weeks firstObject], [weeks lastObject]) success:^(id json) {
+                self.myTimetables.dateArray = json;
+            } failed:^(NSError *error) {}];
+            break;
+        }
+        case AllTimetableViewType:{
+            self.allTimetables = [[AllTimetablesView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - getHeight(64))];
+            [self.view addSubview:self.allTimetables];
+            //请求数据并刷新
+            NSArray *weeks = [self.currentDate getCurrentWeekAllDate:@"yyyy/MM/dd"];
+            [TimesTableInterfaceRequest requestAllCouresList:allCourseParam(@"", @"", @"", @"", @"", [weeks firstObject], [weeks lastObject]) success:^(id json) {
+            } failed:^(NSError *error) {}];
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 - (void)searchBtnClick:(UIButton *)sender {

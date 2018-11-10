@@ -54,7 +54,7 @@
 
 - (void)creatMonthHeader:(NSString *)title {
     UILabel *label = [[UILabel alloc]init];
-    label.font = [UIFont fontWithName:@"PingFangSC-Medium" size:18];
+    label.font = [UIFont fontWithName:@"PingFangSC-Medium" size:14];
     label.textColor = [UIColor colorWithHex:@"#38383d"];
     label.textAlignment = NSTextAlignmentCenter;
     label.text = title;

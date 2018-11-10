@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TimesTableModel.h"
 
 typedef enum PopTimeTablesViewType{
     MyPopTimeTablesViewType = 0,
@@ -15,6 +16,6 @@ typedef enum PopTimeTablesViewType{
 
 @interface PopTimeTablesView : UIView
 
-- (instancetype)initWithPopTimeTablesViewType:(PopTimeTablesViewType)type;
+- (instancetype)initWithPopTimeTablesViewType:(PopTimeTablesViewType)type InfoArray:(NSArray<CourseInfoModel *>*)array;
 
 @end

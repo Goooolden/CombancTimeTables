@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TimesTableModel.h"
 
 @interface MyTimetablesView : UIView
+
+@property (nonatomic, strong) NSArray<MyCourseModel *> *dateArray;
 
 @end

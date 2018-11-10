@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TimesTableModel.h"
 
 @interface MyPopView : UIView
+
+@property (nonatomic, copy) NSArray<CourseInfoModel *> *dataArray;
 
 @end

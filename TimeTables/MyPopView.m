@@ -36,14 +36,6 @@
         self.backgroundColor = [UIColor whiteColor];
         self.layer.cornerRadius = 6;
         [self configUI];
-        
-        self.weekLabel.text = @"周三";
-        self.dayLabel.text = @"15";
-        self.monthLabel.text = @"10月";
-        self.sectionLabel.text= @"第二节";
-        self.courseNameLabel.text = @"社会与科学";
-        self.classLabel.text = @"高三1班";
-        self.placeLabel.text = @"教学楼502教室";
     }
     return self;
 }
@@ -97,6 +89,25 @@
         make.top.equalTo(self.classLabel.mas_bottom).offset(4);
         make.centerX.equalTo(self);
     }];
+}
+
+- (void)setDataArray:(NSArray<CourseInfoModel *> *)dataArray {
+    CourseInfoModel *model = [dataArray firstObject];
+    NSArray *dateArray = [model.day componentsSeparatedByString:@"/"];
+    self.dayLabel.text = [NSString stringWithFormat:@"%@",dateArray.lastObject];
+    self.monthLabel.text = [NSString stringWithFormat:@"%@月",dateArray[1]];
+    self.weekLabel.text = [NSString stringWithFormat:@"周%@",[self stringFromInt:[model.week intValue]]];
+    self.sectionLabel.text= [NSString stringWithFormat:@"第%@节",[self stringFromInt:[model.numofday intValue]]];
+    self.courseNameLabel.text = model.subject;
+    self.classLabel.text = model.clazz;
+    self.placeLabel.text = model.teacherName;
+}
+
+- (NSString *)stringFromInt:(int)number {
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    formatter.numberStyle = kCFNumberFormatterRoundHalfDown;
+    NSString *string = [formatter stringFromNumber:[NSNumber numberWithInteger:number]];
+    return string;
 }
 
 - (UILabel *)weekLabel {

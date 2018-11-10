@@ -26,13 +26,14 @@
 
 @implementation PopTimeTablesView
 
-- (instancetype)initWithPopTimeTablesViewType:(PopTimeTablesViewType)type {
+- (instancetype)initWithPopTimeTablesViewType:(PopTimeTablesViewType)type InfoArray:(NSArray<CourseInfoModel *> *)array {
     if (self = [super init]) {
         self.frame = [UIScreen mainScreen].bounds;
         [self addSubview:self.backgroundView];
         [self addSubview:self.deleteBtn];
         if (type == MyPopTimeTablesViewType) {
             MyPopView *myView = [[MyPopView alloc]init];
+            myView.dataArray = array;
             [self addSubview:myView];
             [myView mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.center.equalTo(self);

@@ -27,7 +27,6 @@
     self.courseLabel = [[UILabel alloc]init];
     self.courseLabel.textAlignment = NSTextAlignmentCenter;
     self.courseLabel.numberOfLines = 0;
-    self.courseLabel.text = @"数学\n高三五班\n502教室";
     self.courseLabel.textColor = [UIColor colorWithHex:@"#38383d"];
     self.courseLabel.backgroundColor = [UIColor whiteColor];
     self.courseLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:12];

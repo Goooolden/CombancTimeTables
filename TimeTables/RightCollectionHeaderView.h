@@ -17,4 +17,5 @@ typedef enum RightHeaderViewType{
 
 - (void)createRightHeaderView:(RightHeaderViewType)type;
 
+- (void)updateDate:(NSArray *)currentWeeks currentWeek:(int)week;
 @end

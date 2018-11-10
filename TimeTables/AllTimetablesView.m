@@ -160,8 +160,7 @@ UICollectionViewDelegateFlowLayout>
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"indexPath--%@",indexPath);
-    PopTimeTablesView *popView = [[PopTimeTablesView alloc]initWithPopTimeTablesViewType:AllPopTimeTablesViewType];
+    PopTimeTablesView *popView = [[PopTimeTablesView alloc]initWithPopTimeTablesViewType:AllPopTimeTablesViewType InfoArray:nil];
     [[UIApplication sharedApplication].keyWindow addSubview:popView];
 }
 
