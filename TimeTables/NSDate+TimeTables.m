@@ -11,7 +11,7 @@
 
 - (NSDateComponents *)components:(NSDate *)date {
     NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSDateComponents *components = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitWeekday | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:date];
+    NSDateComponents *components = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitWeekday | NSCalendarUnitWeekOfYear | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:date];
     //1->周日 2->周一 ···
     calendar.firstWeekday = 1;
     return components;
@@ -30,11 +30,7 @@
 }
 
 - (int)week {
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSDateComponents *components = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitWeekday | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:self];
-    //1->周日 2->周一 ···
-    calendar.firstWeekday = 1;
-    return (int)[components weekday] - 1;
+    return (int)[self components:self].weekday - 1;
 }
 
 - (int)hour {
@@ -47,6 +43,10 @@
 
 - (int)second {
     return (int)[self components:self].second;
+}
+
+- (int)weeksInYear {
+    return (int)[self components:self].weekOfYear;
 }
 
 - (int)daysInYear {
@@ -90,21 +90,21 @@
 
 - (NSDate *)lastWeek {
     NSDateComponents *dateComponents = [[NSDateComponents alloc]init];
-    dateComponents.weekday = -1;
+    dateComponents.weekday = -7;
     NSDate *newDate = [[NSCalendar currentCalendar] dateByAddingComponents:dateComponents toDate:self options:0];
     return newDate;
 }
 
 - (NSDate *)nextWeek {
     NSDateComponents *dateComponents = [[NSDateComponents alloc]init];
-    dateComponents.weekday = +1;
+    dateComponents.weekday = +7;
     NSDate *newDate = [[NSCalendar currentCalendar] dateByAddingComponents:dateComponents toDate:self options:0];
     return newDate;
 }
 
 - (NSArray *)getCurrentWeekAllDate:(NSString *)formatter {
     NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSDateComponents *components = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitWeekday fromDate:self];
+    NSDateComponents *components = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitWeekday fromDate:self];
     //1->周日 2->周一 ···
     calendar.firstWeekday = 1;
     NSInteger weekDay = [components weekday] - 1;
@@ -138,6 +138,13 @@
 - (NSMutableArray *)getCurrentWeeksWithFirstDiff:(NSInteger)first lastDiff:(NSInteger)last formatter:(NSString *)formatter{
     NSMutableArray *eightArr = [[NSMutableArray alloc] init];
     for (NSInteger i = first; i < last + 1; i ++) {
+        NSTimeInterval secondsPerDay = i * 24*60*60;
+        NSDate *curDate = [self initWithTimeInterval:secondsPerDay sinceDate:self];
+        //日期
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:formatter];
+        NSString *dateStr = [dateFormatter stringFromDate:curDate];
+#if 0
         //从现在开始的24小时
         NSTimeInterval secondsPerDay = i * 24*60*60;
         NSDate *curDate = [NSDate dateWithTimeIntervalSinceNow:secondsPerDay];
@@ -145,7 +152,7 @@
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:formatter];
         NSString *dateStr = [dateFormatter stringFromDate:curDate];
-#if 0
+
         //星期
         NSDateFormatter *weekFormatter = [[NSDateFormatter alloc] init];
         [weekFormatter setDateFormat:@"EEEE"];

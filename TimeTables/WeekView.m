@@ -12,28 +12,28 @@
 
 @interface WeekView()
 
-@property (nonatomic, copy  ) NSDictionary *infoDic;
+@property (nonatomic, strong) NSMutableArray *infoArray;
 @property (nonatomic, strong) UIButton *recordBtn;
 
 @end
 
 @implementation WeekView
 
-+ (instancetype)creatWithFrame:(CGRect)frame infoDictionary:(NSDictionary *)dic {
-    NSAssert(dic != nil, @"信息不能为空");
++ (instancetype)creatWithFrame:(CGRect)frame infoArray:(NSMutableArray *)array{
+    NSAssert(array != nil, @"信息不能为空");
     
     if (CGRectIsNull(frame)) {
         frame = CGRectMake(0, 0, SCREEN_WIDTH, getHeight(46));
     }
 
-    WeekView *weekView = [[WeekView alloc]initWithFrame:frame infoDic:dic];
+    WeekView *weekView = [[WeekView alloc]initWithFrame:frame infoDic:array];
     return weekView;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame infoDic:(NSDictionary *)dic {
+- (instancetype)initWithFrame:(CGRect)frame infoDic:(NSMutableArray *)array {
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = [UIColor whiteColor];
-        _infoDic = dic;
+        _infoArray = array;
         [self configUI];
     }
     return self;
@@ -50,7 +50,7 @@
         weekBtn.frame = CGRectMake(x + (w + getWidth(20)) * i, y, w, h);
         weekBtn.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:14];
         weekBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
-        [weekBtn setTitle:@"第十五周" forState:UIControlStateNormal];
+        [weekBtn setTitle:_infoArray[i] forState:UIControlStateNormal];
         [weekBtn setBackgroundColor:[UIColor whiteColor]];
         [weekBtn setTitleColor:[UIColor colorWithHex:@"#7a7e85"] forState:UIControlStateNormal];
         if (i == 1) {
@@ -69,8 +69,22 @@
 }
 
 - (void)weekButtonClick:(UIButton *)sender {
-    if (self.weekViewClickedBlock) {
-        self.weekViewClickedBlock(@"第十五周", @"typeid");
+    if ([self.weekViewDelegate respondsToSelector:@selector(weekViewSelectedWithName:)]) {
+        switch (sender.tag) {
+            case 0:{
+                [self.weekViewDelegate weekViewSelectedWithName:@"last"];
+                break;
+            }
+            case 1:{
+                [self.weekViewDelegate weekViewSelectedWithName:@"current"];
+                break;
+            }
+            case 2:{
+                [self.weekViewDelegate weekViewSelectedWithName:@"next"];
+            }
+            default:
+                break;
+        }
     }
     if (_recordBtn == sender) {
         //上次点击的按钮，不做处理

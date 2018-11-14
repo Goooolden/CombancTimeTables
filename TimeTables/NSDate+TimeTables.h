@@ -26,6 +26,8 @@
 - (int)daysInYear;
 //是否为闰年
 - (BOOL)isLeapYear;
+//本年的第几周
+- (int)weeksInYear;
 //当前时间月份的第一天是周几
 - (int)firstWeekDayInThisMonth;
 //当前时间月份共有多少天

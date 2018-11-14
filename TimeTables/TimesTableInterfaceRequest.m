@@ -15,6 +15,7 @@
 
 + (void)requestMyCouresList:(NSDictionary *)params success:(RequestSuccess)success failed:(RequestFailed)failed {
     [HTTPTool postWithURL:GetMyCourse_URL headers:header(MyToken) params:params success:^(id json) {
+        NSLog(@"timea--%@",json);
         switch ([json[@"result"] intValue]) {
             case 1:{
                 //操作成功

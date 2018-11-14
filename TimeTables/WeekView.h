@@ -8,19 +8,23 @@
 
 #import <UIKit/UIKit.h>
 
-typedef void(^WeekViewClickedBlock)(NSString *name,NSString *id);
+@protocol WeekViewDelegate <NSObject>
+
+- (void)weekViewSelectedWithName:(NSString *)name;
+
+@end
 
 @interface WeekView : UIView
 
-@property (nonatomic, copy) WeekViewClickedBlock weekViewClickedBlock;
+@property (nonatomic, assign) id<WeekViewDelegate> weekViewDelegate;
 
 /**
  创建周次视图
 
  @param frame 视图frame
- @param dic 周次的信息，name&&id
+ @param array 周次的信息
  @return weekView
  */
-+ (instancetype)creatWithFrame:(CGRect)frame infoDictionary:(NSDictionary *)dic;
++ (instancetype)creatWithFrame:(CGRect)frame infoArray:(NSMutableArray *)array;
 
 @end

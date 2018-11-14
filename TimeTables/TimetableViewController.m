@@ -30,6 +30,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [[NSUserDefaults standardUserDefaults]setObject:self.token forKey:TimesTablesToken];
     self.edgesForExtendedLayout = UIRectEdgeNone;
     self.currentDate = [NSDate new];
     [self creatUI];
@@ -48,6 +49,8 @@
 }
 
 - (void)creatUI {
+    //暂时不需要大课表
+#if 0
     //title
     self.titleView = [TitleView createTitleViewWithTitleType:MyTimetableTitle];
     __weak typeof(self) weakSelf = self;
@@ -77,6 +80,7 @@
         }
     }];
     self.navigationItem.titleView = self.titleView;
+#endif
     
     //timeTableView
     switch (self.timetableViewType) {

@@ -29,7 +29,8 @@ UITableViewDataSource,
 UIScrollViewDelegate,
 UICollectionViewDelegate,
 UICollectionViewDataSource,
-UICollectionViewDelegateFlowLayout>
+UICollectionViewDelegateFlowLayout,
+WeekViewDelegate>
 
 @property (nonatomic, copy  ) NSArray *datas;
 @property (nonatomic, strong) WeekView *weekView;
@@ -50,10 +51,8 @@ UICollectionViewDelegateFlowLayout>
 }
 
 - (void)configUI {
-    WeekView *weekView = [WeekView creatWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, getHeight(46)) infoDictionary:@{@"1":@"2"}];
-    [weekView setWeekViewClickedBlock:^(NSString *name, NSString *id) {
-        NSLog(@"%@,%@",name,id);
-    }];
+    WeekView *weekView = [WeekView creatWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, getHeight(46)) infoArray:@[@"1",@"3"]];
+    weekView.weekViewDelegate = self;
     [self addSubview:weekView];
     
     self.leftTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, getHeight(46), getWidth(42), self.bounds.size.height - getHeight(46)) style:UITableViewStylePlain];
@@ -181,6 +180,10 @@ UICollectionViewDelegateFlowLayout>
         // 底部视图
     }
     return reusableView;
+}
+
+- (void)weekViewSelectedWithName:(NSString *)name {
+    
 }
 
 @end

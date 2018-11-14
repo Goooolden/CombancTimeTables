@@ -18,6 +18,7 @@
 #import "NSDate+TimeTables.h"
 #import "TimesTableInterfaceMacro.h"
 #import "TimesTableInterfaceRequest.h"
+#import "NSDate+TimeTables.h"
 
 #define CELL_WIDTH  getWidth(66)
 #define CELL_HEIGHT getHeight(80)
@@ -32,7 +33,8 @@ UITableViewDataSource,
 UIScrollViewDelegate,
 UICollectionViewDelegate,
 UICollectionViewDataSource,
-UICollectionViewDelegateFlowLayout>
+UICollectionViewDelegateFlowLayout,
+WeekViewDelegate>
 
 @property (nonatomic, copy  ) NSArray *datas;
 @property (nonatomic, strong) WeekView *weekView;
@@ -60,10 +62,12 @@ UICollectionViewDelegateFlowLayout>
 }
 
 - (void)configUI {
-    WeekView *weekView = [WeekView creatWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, getHeight(46)) infoDictionary:@{@"1":@"2"}];
-    [weekView setWeekViewClickedBlock:^(NSString *name, NSString *id) {
-        NSLog(@"%@,%@",name,id);
-    }];
+    //获取今年中最近的三周为第几周
+    int currentWeeks = [self.currentDate weeksInYear];
+    NSMutableArray *weekArray = [NSMutableArray arrayWithObjects:[NSString stringWithFormat:@"第%d周",currentWeeks - 1],[NSString stringWithFormat:@"第%d周",currentWeeks],[NSString stringWithFormat:@"第%d周",currentWeeks + 1], nil];
+    
+    WeekView *weekView = [WeekView creatWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, getHeight(46)) infoArray:weekArray];
+    weekView.weekViewDelegate = self;
     [self addSubview:weekView];
     
     self.leftTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, getHeight(46), getWidth(42), self.bounds.size.height - getHeight(46)) style:UITableViewStylePlain];
@@ -212,6 +216,29 @@ UICollectionViewDelegateFlowLayout>
         // 底部视图
     }
     return reusableView;
+}
+
+#pragma mark - WeekViewDelegate
+- (void)weekViewSelectedWithName:(NSString *)name {
+    self.currentDate = [NSDate new];
+    if ([name isEqualToString:@"last"]) {
+        self.currentDate = [self.currentDate lastWeek];
+        NSArray *weeks = [self.currentDate getCurrentWeekAllDate:@"yyyy/MM/dd"];
+        [TimesTableInterfaceRequest requestMyCouresList:myCourseParam([weeks firstObject], [weeks lastObject]) success:^(id json) {
+            [self.rightCollectionView reloadData];
+        } failed:^(NSError *error) {}];
+    }else if ([name isEqualToString:@"current"]) {
+        NSArray *weeks = [self.currentDate getCurrentWeekAllDate:@"yyyy/MM/dd"];
+        [TimesTableInterfaceRequest requestMyCouresList:myCourseParam([weeks firstObject], [weeks lastObject]) success:^(id json) {
+            [self.rightCollectionView reloadData];
+        } failed:^(NSError *error) {}];
+    }else if ([name isEqualToString:@"next"]) {
+        self.currentDate = [self.currentDate nextWeek];
+        NSArray *weeks = [self.currentDate getCurrentWeekAllDate:@"yyyy/MM/dd"];
+        [TimesTableInterfaceRequest requestMyCouresList:myCourseParam([weeks firstObject], [weeks lastObject]) success:^(id json) {
+                [self.rightCollectionView reloadData];
+            } failed:^(NSError *error) {}];
+        }
 }
 
 @end

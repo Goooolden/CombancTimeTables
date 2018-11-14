@@ -23,8 +23,9 @@ NSString *str = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEnc
 [paramDic setObject:str forKey:@"param"]; \
 } while (0)
 
-#define BASE_URL (@"http://10.5.1.172:8087/basis")
-#define MyToken (@"Combanc eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU0MTg3MzM2OH0.inP7j1Lm6uD-dJuomPCbutOwnGIKb1TgcEL_DRI2X66mDRPFjMBMfU9IFb_SOY3ZoaamiEfcFVNDPHSXoTUrIg")
+#define BASE_URL (@"https://campus.shuxiaoyun.cn/micro/basis")
+#define TimesTablesToken (@"TimesTablesToken")
+#define MyToken [[NSUserDefaults standardUserDefaults] objectForKey:TimesTablesToken]
 
 //请求header
 NS_INLINE NSDictionary *header(NSString *token) {
