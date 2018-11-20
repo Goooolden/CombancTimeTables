@@ -177,6 +177,7 @@ WeekViewDelegate>
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     RightCollectionViewCell *cell = (RightCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:RIGHT_CELLID forIndexPath:indexPath];
+    cell.courseLabel.text = @"";
     for (MyCourseModel *model in self.dateArray) {
         if (indexPath.row + 1 == [model.week intValue] &&
             indexPath.section + 1 == [model.numofday intValue]) {
@@ -221,22 +222,26 @@ WeekViewDelegate>
 #pragma mark - WeekViewDelegate
 - (void)weekViewSelectedWithName:(NSString *)name {
     self.currentDate = [NSDate new];
+    [self.dateArray removeAllObjects];
     if ([name isEqualToString:@"last"]) {
         self.currentDate = [self.currentDate lastWeek];
         NSArray *weeks = [self.currentDate getCurrentWeekAllDate:@"yyyy/MM/dd"];
         [TimesTableInterfaceRequest requestMyCouresList:myCourseParam([weeks firstObject], [weeks lastObject]) success:^(id json) {
+            self.dateArray = json;
             [self.rightCollectionView reloadData];
         } failed:^(NSError *error) {}];
     }else if ([name isEqualToString:@"current"]) {
         NSArray *weeks = [self.currentDate getCurrentWeekAllDate:@"yyyy/MM/dd"];
         [TimesTableInterfaceRequest requestMyCouresList:myCourseParam([weeks firstObject], [weeks lastObject]) success:^(id json) {
+            self.dateArray = json;
             [self.rightCollectionView reloadData];
         } failed:^(NSError *error) {}];
     }else if ([name isEqualToString:@"next"]) {
         self.currentDate = [self.currentDate nextWeek];
         NSArray *weeks = [self.currentDate getCurrentWeekAllDate:@"yyyy/MM/dd"];
         [TimesTableInterfaceRequest requestMyCouresList:myCourseParam([weeks firstObject], [weeks lastObject]) success:^(id json) {
-                [self.rightCollectionView reloadData];
+            self.dateArray = json;
+            [self.rightCollectionView reloadData];
             } failed:^(NSError *error) {}];
         }
 }

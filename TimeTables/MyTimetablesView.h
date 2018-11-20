@@ -11,6 +11,6 @@
 
 @interface MyTimetablesView : UIView
 
-@property (nonatomic, strong) NSArray<MyCourseModel *> *dateArray;
+@property (nonatomic, strong) NSMutableArray<MyCourseModel *> *dateArray;
 
 @end
