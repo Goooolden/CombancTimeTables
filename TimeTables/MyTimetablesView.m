@@ -50,6 +50,7 @@ WeekViewDelegate>
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
+        self.backgroundColor = [UIColor whiteColor];
         self.currentDate = [NSDate new];
         [self configUI];
     }

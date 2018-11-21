@@ -65,10 +65,10 @@
         //星期
         UILabel *weeklabel = [[UILabel alloc]init];
         CGFloat weekX = getWidth(19);
-        weeklabel.frame = CGRectMake(weekX + getWidth(66) * i, y + h + 4, getWidth(30), getHeight(30));
+        weeklabel.frame = CGRectMake(weekX + getWidth(66) * i, y + h + 4, getWidth(30), getWidth(30));
         weeklabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:12];
         weeklabel.layer.masksToBounds = YES;
-        weeklabel.layer.cornerRadius = getHeight(30)/2;
+        weeklabel.layer.cornerRadius = getWidth(30)/2;
         weeklabel.textAlignment = NSTextAlignmentCenter;
         NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
         formatter.numberStyle = kCFNumberFormatterRoundHalfDown;
@@ -91,7 +91,6 @@
         dateLabel.textColor = [UIColor colorWithHex:@"#38383d"];
         dateLabel.backgroundColor = [UIColor whiteColor];
         dateLabel.textAlignment = NSTextAlignmentCenter;
-        dateLabel.text = @"7月18日  周一";
         [self addSubview:dateLabel];
     }
 }

@@ -30,6 +30,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
     [[NSUserDefaults standardUserDefaults]setObject:self.token forKey:TimesTablesToken];
     self.edgesForExtendedLayout = UIRectEdgeNone;
     self.currentDate = [NSDate new];
@@ -86,7 +87,11 @@
     switch (self.timetableViewType) {
         case MyTimetableViewType:{
             //跳转到我的课表
-            self.myTimetables = [[MyTimetablesView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - getHeight(64))];
+            CGFloat height = 0;
+            if (@available(iOS 11.0, *)) {
+                height = 44;
+            }
+            self.myTimetables = [[MyTimetablesView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - getHeight(64) - height)];
             [self.view addSubview:self.myTimetables];
             //请求数据并刷新
             NSArray *weeks = [self.currentDate getCurrentWeekAllDate:@"yyyy/MM/dd"];
