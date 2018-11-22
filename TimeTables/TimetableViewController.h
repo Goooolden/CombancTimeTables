@@ -15,6 +15,7 @@ typedef enum TimetableViewType{
 
 @interface TimetableViewController : UIViewController
 
+@property (nonatomic, copy  ) NSString *baseUrl;
 @property (nonatomic, copy  ) NSString *token;
 @property (nonatomic, assign) TimetableViewType timetableViewType;
 

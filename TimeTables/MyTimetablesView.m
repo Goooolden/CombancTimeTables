@@ -19,6 +19,7 @@
 #import "TimesTableInterfaceMacro.h"
 #import "TimesTableInterfaceRequest.h"
 #import "NSDate+TimeTables.h"
+#import "Masonry.h"
 
 #define CELL_WIDTH  getWidth(66)
 #define CELL_HEIGHT getHeight(80)
@@ -42,6 +43,7 @@ WeekViewDelegate>
 @property (nonatomic, strong) UIScrollView *rightScrollView;
 @property (nonatomic, strong) UICollectionView *rightCollectionView;
 @property (nonatomic, strong) NSDate *currentDate;
+@property (nonatomic, assign) CGRect myFrame;
 
 @end
 
@@ -50,6 +52,7 @@ WeekViewDelegate>
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
+        _myFrame = frame;
         self.backgroundColor = [UIColor whiteColor];
         self.currentDate = [NSDate new];
         [self configUI];
@@ -71,7 +74,15 @@ WeekViewDelegate>
     weekView.weekViewDelegate = self;
     [self addSubview:weekView];
     
-    self.leftTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, getHeight(46), getWidth(42), self.bounds.size.height - getHeight(46)) style:UITableViewStylePlain];
+    CGFloat height = getHeight(46);
+    if (@available(iOS 11.0, *)) {
+        CGFloat a =  [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bottom;
+        if (a > 0) {
+            height = getHeight(34+46);
+        }
+    }
+    
+    self.leftTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, getHeight(46), getWidth(42), _myFrame.size.height - height) style:UITableViewStylePlain];
     self.leftTableView.backgroundColor = [UIColor colorWithHex:@"#EBEBF1"];
     self.leftTableView.delegate = self;
     self.leftTableView.dataSource = self;
@@ -91,7 +102,7 @@ WeekViewDelegate>
     NSString *string = [formatter stringFromNumber:[NSNumber numberWithInt:self.currentDate.month]];
     self.leftTableView.tableHeaderView = [LeftHeaderView createLeftHeaderView:LeftHeaderMonth title:[NSString stringWithFormat:@"%@月",string]];
     
-    self.rightScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(self.leftTableView.frame.size.width, getHeight(46), SCREEN_WIDTH - getWidth(42), self.bounds.size.height - getHeight(46))];
+    self.rightScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(self.leftTableView.frame.size.width, getHeight(46), SCREEN_WIDTH - getWidth(42), _myFrame.size.height - height)];
     self.rightScrollView.contentSize = CGSizeMake((CELL_WIDTH + 1)* 7, self.leftTableView.frame.size.height);
     self.rightScrollView.bounces = NO;
     self.rightScrollView.showsVerticalScrollIndicator = NO;
@@ -104,7 +115,7 @@ WeekViewDelegate>
     flowLayout.minimumLineSpacing = 0;
     flowLayout.minimumInteritemSpacing = 0;
     flowLayout.sectionInset = UIEdgeInsetsMake(0, 0, 8, 1);
-    self.rightCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, (CELL_WIDTH + 1) * 7, self.bounds.size.height - getHeight(46)) collectionViewLayout:flowLayout];
+    self.rightCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, (CELL_WIDTH + 1) * 7, _myFrame.size.height - height) collectionViewLayout:flowLayout];
     self.rightCollectionView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     self.rightCollectionView.delegate = self;
     self.rightCollectionView.dataSource = self;

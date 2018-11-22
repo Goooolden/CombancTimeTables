@@ -23,7 +23,10 @@ NSString *str = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEnc
 [paramDic setObject:str forKey:@"param"]; \
 } while (0)
 
-#define BASE_URL (@"https://campus.shuxiaoyun.cn/micro/basis")
+#define TimesTablesBaseUrl (@"TimesTablesBaseUrl")
+#define TimesTablesImgURL ([NSString stringWithFormat:@"%@/file/upload",[[NSUserDefaults standardUserDefaults] objectForKey:TimesTablesBaseUrl]])
+#define BASE_URL ([NSString stringWithFormat:@"%@/basis",[[NSUserDefaults standardUserDefaults] objectForKey:TimesTablesBaseUrl]])
+
 #define TimesTablesToken (@"TimesTablesToken")
 #define MyToken [[NSUserDefaults standardUserDefaults] objectForKey:TimesTablesToken]
 

@@ -43,7 +43,7 @@
                 break;
         }
     } failure:^(NSError *error) {
-        
+        NSLog(@"error--%@",error);
     }];
 }
 

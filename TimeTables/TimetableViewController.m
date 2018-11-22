@@ -31,10 +31,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
-    [[NSUserDefaults standardUserDefaults]setObject:self.token forKey:TimesTablesToken];
     self.edgesForExtendedLayout = UIRectEdgeNone;
     self.currentDate = [NSDate new];
     [self creatUI];
+}
+
+- (void)setToken:(NSString *)token {
+    [[NSUserDefaults standardUserDefaults]setObject:token forKey:TimesTablesToken];
+}
+
+- (void)setBaseUrl:(NSString *)baseUrl {
+    [[NSUserDefaults standardUserDefaults] setObject:baseUrl forKey:TimesTablesBaseUrl];
 }
 
 - (UIButton *)searchBtn {
@@ -88,9 +95,9 @@
         case MyTimetableViewType:{
             //跳转到我的课表
             CGFloat height = 0;
-            if (@available(iOS 11.0, *)) {
-                height = 44;
-            }
+//            if (@available(iOS 11.0, *)) {
+//                height = getHeight(44);
+//            }
             self.myTimetables = [[MyTimetablesView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - getHeight(64) - height)];
             [self.view addSubview:self.myTimetables];
             //请求数据并刷新
